@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,16 +18,19 @@ public abstract class AbstractWebServiceProvider implements Provider {
 
 	private HttpURLConnection conn;
 
-	AbstractWebServiceProvider(URL url, Map<String, String> headers) throws Exception {
+	AbstractWebServiceProvider(String url, Map<String, String> headers) throws Exception {
 		this.headers = headers;
-
+		
+		if(url == null || url.length() == 0)
+			throw new NullPointerException("URL to web service cannot be empty!");
+		
 		// URL itself has no knowledge of encoding, as stated in the official
 		// document,
 		// we need to encode the parameter before creating the URL instance.
-		this.url = new URL(url.toURI().toASCIIString());
+		this.url = new URL(new URI(url).toASCIIString());
 	}
 
-	AbstractWebServiceProvider(URL url, Map<String, String> headers, Map<String, String> parameters) throws Exception {
+	AbstractWebServiceProvider(String url, Map<String, String> headers, Map<String, String> parameters) throws Exception {
 		this(url, headers);
 
 		// only used with POST
@@ -52,7 +56,7 @@ public abstract class AbstractWebServiceProvider implements Provider {
 	}
 
 	public WebService getService() {
-		return new WebService() {dddddddddd
+		return new WebService() {
 			@Override
 			public String request() throws IOException {
 				try(BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
