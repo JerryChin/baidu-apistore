@@ -1,5 +1,6 @@
 package com.jerrychin.util;
 
 public interface WebService {
-	String request() throws Exception;
+	String get() throws Exception;
+	String post() throws Exception;
 }
